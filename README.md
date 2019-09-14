@@ -1,9 +1,10 @@
 # DjangoWebDevOps
-This is  DevOps-Manager-Platform  for Django WebUI .
+##### This is  DevOps-Manager-Platform  for Django WebUI .
  
- 这是我的csdn博客地址：https://blog.csdn.net/qq_28513801/article/details/100750538
+ ##### 这是我的csdn博客地址：https://blog.csdn.net/qq_28513801/article/details/100750538
+ email: 1300042631@qq.com
  
- >  先说一下，完成一半自己想做的项目的感受和经历。
+ > 先说一下，完成一半自己想做的项目的感受和经历。
  
 > 这是一个从后台到前端独自完成的自己的项目，虽然这两天刚加入的功能还没有完全实现，但是也差不多存在一些功能了。
 由于没有使用前端模板，所以代码写的很烂，期间遇到了很多问题，saltstack,zabbix等各种api的调用，
@@ -68,7 +69,8 @@ This is  DevOps-Manager-Platform  for Django WebUI .
 
 ##### 第一种方法：
 
-可以选择在WIN环境下，调试，使用Pycharm进行部署，运行runserver，打开浏览器就能访问了。
+>可以选择在WIN环境下，调试，使用Pycharm进行部署，运行runserver，打开浏览器就能访问了。
+
 下面是细节：
 
 * 1,先下载专业版的Pycharm，选择Django模板，这里如果Django使用的是v2.X版本的话，会报一些警告，因为1.95和2.x的平台会有些不兼容，比如urls.py文件内容的书写格式，有很大偏差，建议没有特殊要求，就直接使用1.95。
