@@ -43,7 +43,7 @@ Docker	v18.3
 Grafana（测试API）	v5.6
 Echarts	官网最新版（开发者版完整版）
 
- ![image]https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/shouye.png
+ ![image] https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/shouye.png
 一、部署的方法：
 第一种方法：
 可以选择在WIN环境下，调试，使用Pycharm进行部署，运行runserver，打开浏览器就能访问了。
