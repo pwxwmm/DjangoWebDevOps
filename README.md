@@ -149,7 +149,7 @@ web:     # web标签：
 ```
 5，在子目录mysite下requirements.txt文件，该文件内容如下:
 
-```
+```python
 [root@master mysite]# vim /mysite/DjangoWeb/requirements.txt 
 
 django==1.9.5
@@ -161,7 +161,7 @@ salt
 ```
 6,构建镜像:
 
-```bash
+```python
 [root@master mysite]# cd /mysite
 [root@master mysite]# docker-compose build
 [root@master mysite]# docker images
@@ -215,7 +215,7 @@ python manage.py migrate
 python manage.py createsuperuser 
 ```
 9,进入mysite目录，启动容器
-```
+```python
 docker-compose up
 ```
 有关Docker-compose的相关操作，我已经在下面添加了链接，可以了解一下，该流程和操作。
