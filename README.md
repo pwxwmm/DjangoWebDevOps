@@ -29,27 +29,44 @@ This is  DevOps-Manager-Platform  for Django WebUI .
  6） 平台上也应该存在我觉得运维最为重要的标志------日志。所以这个运维平台的UI界面应该具备日志管理功能，能够在大量的日志中，过滤出关键字，并图形化的展示出来，好减少运维人员的痛苦。
 
  7） 我认为这个平台还应该具备UI下操作，用户权限管理功能，避免某些用户执行rm -rf…
+ 
+|软件	|版本|
+|:---|:---|
+|ZABBIX	|V3.4
+|Python|	V3.6
+|Django	|V1.95
+|bootstrap	|v3.30
+|Mysql	|v5.7
+|saltstack	|v2019.2.0 (Fluorine)
+|Centos	|CentOS-7-x86_64-DVD-1511
+|Pycharm(专业版)	|v2019.2.x
+|Docker	|v18.3
+|Grafana（测试API）|	v5.6
+|Echarts	|官网最新版（开发者版完整版）
 
-软件	版本
-ZABBIX	V3.4
-Python	V3.6
-Django	V1.95
-bootstrap	v3.30
-Mysql	v5.7
-saltstack	v2019.2.0 (Fluorine)
-Centos	CentOS-7-x86_64-DVD-1511
-Pycharm(专业版)	v2019.2.x
-Docker	v18.3
-Grafana（测试API）	v5.6
-Echarts	官网最新版（开发者版完整版）
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/shouye.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/shouyecaidan.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/cmd.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/zican.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tinajiazhuji.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua1.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua2.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua3.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua4.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua5.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua6.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua7.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua8.png) 
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua9.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua10.png) 
+ 
 
- ![image] https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/shouye.png
-一、部署的方法：
+
+#### 一、部署的方法：
 第一种方法：
 可以选择在WIN环境下，调试，使用Pycharm进行部署，运行runserver，打开浏览器就能访问了。
 下面是细节：
 先下载专业版的Pycharm，选择Django模板，这里如果Django使用的是v2.X版本的话，会报一些警告，因为1.95和2.x的平台会有些不兼容，比如urls.py文件内容的书写格式，有很大偏差，建议没有特殊要求，就直接使用1.95。
-
 首先使用pycharm导入这个项目目录，并且要先安装好MYSQL，建议二进制安装。并配置好。
 其次在Pycharm的Django中，也要能成功连接MYSQL，修改好setting.py后，最好再测试一下。
 紧接着在models.py文件中写好自己的数据模型，Django会自己帮你生成你需要的数据表，如果暂时没有其他额外需求，可以不修改我这里的models.py文件。
@@ -64,18 +81,21 @@ Echarts	官网最新版（开发者版完整版）
 使用Docker-compose部署Django环境，这种方法是在linux环境下部署的，或者你购买的云主机服务器等。
 
 1,可以先安装Docker,然后执行命令启动：
+```bash
 [root@master ~]# systemctl start docker
 [root@master ~]# systemctl enable docker
-
+```
 2,把所有能用到的镜像都pull下来，可以使用自己的dockerHub或者使用阿里云的，
+```
 [root@master ~]# docker pull mysql
 [root@master ~]# docker pull django:1.9.5
 [root@master ~]# docker pull python:3.6.0
 [root@master ~]# mkdir -p /mysite/{DjangoWeb,db}
+```
+3,Dockerfile包含创建镜像所需要的全部指令。在项目根目录下创建Dockerfile文件，其内容如下
 
-3,Dockerfile包含创建镜像所需要的全部指令。在项目根目录下创建Dockerfile文件，其内容如下：
+```bash
 [root@master mysite]# vim /mysite/Dockerfile
-
 FROM python:3.6.0   #ROM指令表示新的镜像将基于python:2.7的镜像来构建
 ENV PYTHONUNBUFFERED 1     #ENV为环境变量（PYTHONUNBUFFERED见这里）
 RUN mkdir /code     # RUN指令表示在镜像内新建/code目录
@@ -84,8 +104,12 @@ WORKDIR /code     # 指定RUN、CMD与ENTRYPOINT命令的工作目录
 ADD ./DjangoWeb/requirements.txt /code/    # 将./mysite/requirements.txt文件添加到刚才新建的code目录中
 RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt   # 运行pip安装所需的软件
 ADD . /code/
+```
 
-4.在Dockerfile定义了一个应用，而使用compose，可以在一个文件里，定义多容器的应用。该YAML配置语言，用于描述和组装多容器的分布式应用。在项目根目录创建docker-compose.yml文件，其内容如下：
+4.在Dockerfile定义了一个应用，而使用compose，可以在一个文件里，定义多容器的应用。该YAML配置语言，用于描述和组装多容器的分布式应用。在项目根目录创建
+docker-compose.yml文件，其内容如下：
+
+```yaml
 [root@master mysite]#  vim /mysite/docker-compose.yml
 db:     #db标签
   image: mysql     # images表示使用mysql镜像
@@ -106,8 +130,10 @@ web:     # web标签：
     - "8000:8000"
   links:   # links指向其他容器中的服务
     - db
-
+```
 5，在子目录mysite下requirements.txt文件，该文件内容如下:
+
+```
 [root@master mysite]# vim /mysite/DjangoWeb/requirements.txt 
 
 django==1.9.5
@@ -116,8 +142,10 @@ django-admin-bootstrapped
 django_bootstrap3
 pillow
 salt
-
+```
 6,构建镜像:
+
+```bash
 [root@master mysite]# cd /mysite
 [root@master mysite]# docker-compose build
 [root@master mysite]# docker images
@@ -148,24 +176,30 @@ DATABASES = {
         'PORT': 3306,
     }
 }
+```
 
 添加net端口映射:
+
+```yaml
 [root@master DjangoWeb]# docker inspect 1bf8642343e3 | grep IPAddress    #这里的inspect命令很强大
             "SecondaryIPAddresses": null,
             "IPAddress": "172.17.0.3",
                     "IPAddress": "172.17.0.3",
 
 [root@master DjangoWeb]# iptables -t nat -A  DOCKER -p tcp --dport 80 -j DNAT --to-destination 172.17.0.3:8000     
-
+```
 7， 移入项目到新的创建的项目中，执行数据迁移：
 这里要注意最好是在manage.py的目录下执行：
+```python
 python manage.py makemigrations 
 python manage.py migrate
-
+```
 8，创建超级用户
+```python
 python manage.py createsuperuser 
-
-9,进入mysite目录，启动容器：
+```
+9,进入mysite目录，启动容器
+```
 docker-compose up
-
+```
 有关Docker-compose的相关操作，我已经在上面添加了链接，可以了解一下，该流程和操作。
