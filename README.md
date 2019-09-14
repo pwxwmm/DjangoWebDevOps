@@ -17,7 +17,7 @@
 >> 由于一直在学云计算运维相关的知识，开发代码写的不好，请多多指教，不胜感激涕零。
 
 
-实现思路
+##### 实现思路：
 边学Django边规划着自己所谓的LINUX运维平台，初开始打算做这样的功能：
 
 * 1） 最必不可少的就是主机资产管理了，无论是虚拟机还是服务器或者云主机，我们对他们各自的 - HostInfo都应该一目了然。 这里采用SaltStack调用收集主机配置信息，并且输入ip、ssh用户名和密码，自动部署salt-minion，主机自动添加到salt-master。涉及到前端窗口输入命令结果返回，采用Prism高亮展示代码。
@@ -34,7 +34,8 @@
 
 * 7） 我认为这个平台还应该具备UI下操作，用户权限管理功能，避免某些用户执行rm -rf…
 
-#####  平台架构及版本介绍
+#####  平台架构及版本介绍：
+
 |软件	|版本|
 |:---|:---|
 |ZABBIX	|V3.4
@@ -49,6 +50,7 @@
 |Grafana（测试API）|	v5.6
 |Echarts	|官网最新版（开发者版完整版）
 
+##### 平台页面截图：
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/shouye.png)
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/shouyecaidan.png)
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/cmd.png)
