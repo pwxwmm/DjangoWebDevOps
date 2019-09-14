@@ -215,4 +215,5 @@ python manage.py createsuperuser
 ```
 docker-compose up
 ```
-有关Docker-compose的相关操作，我已经在上面添加了链接，可以了解一下，该流程和操作。
+有关Docker-compose的相关操作，我已经在下面添加了链接，可以了解一下，该流程和操作。
+https://blog.csdn.net/qq_28513801/article/details/93387168
