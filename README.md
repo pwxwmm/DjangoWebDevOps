@@ -2,15 +2,17 @@
 This is  DevOps-Manager-Platform  for Django WebUI .
  
  这是我的csdn博客地址：https://blog.csdn.net/qq_28513801/article/details/100750538
- 先说一下，完成一半自己想做的项目的感受和经历。
-这是一个从后台到前端独自完成的自己的项目，虽然这两天刚加入的功能还没有完全实现，但是也差不多存在一些功能了。
+ 
+ >  先说一下，完成一半自己想做的项目的感受和经历。
+ 
+> 这是一个从后台到前端独自完成的自己的项目，虽然这两天刚加入的功能还没有完全实现，但是也差不多存在一些功能了。
 由于没有使用前端模板，所以代码写的很烂，期间遇到了很多问题，saltstack,zabbix等各种api的调用，
 以及获取到的数据如何发到前端利用Echarts展示，等等，不过也学到了很多，特别是浏览需要调用的API接口，
 像Zabbix，Saltstack等等。特别是如何调用API，官网是最好的，最有用的，最值得花时间去研究的。
 
 
-由于从zabbix–saltstack等API调用和后端接口书写以及前端Echarts数据图形展示，都是独自开发，
-由于一直在学云计算运维相关的知识，开发代码写的不好，请多多指教，不胜感激涕零。
+>> 由于从zabbix–saltstack等API调用和后端接口书写以及前端Echarts数据图形展示，都是独自开发，
+>> 由于一直在学云计算运维相关的知识，开发代码写的不好，请多多指教，不胜感激涕零。
 
 
 实现思路
@@ -62,9 +64,9 @@ This is  DevOps-Manager-Platform  for Django WebUI .
  
 
 
-#### 一、部署的方法：
+### 一、部署的方法：
 
-**第一种方法：
+##### 第一种方法：
 
 可以选择在WIN环境下，调试，使用Pycharm进行部署，运行runserver，打开浏览器就能访问了。
 下面是细节：
@@ -84,9 +86,9 @@ This is  DevOps-Manager-Platform  for Django WebUI .
 
 
 
-第二种方法：
+##### 第二种方法：
 
-使用Docker-compose部署Django环境，这种方法是在linux环境下部署的，或者你购买的云主机服务器等。
+> 使用Docker-compose部署Django环境，这种方法是在linux环境下部署的，或者你购买的云主机服务器等。
 
 1,可以先安装Docker,然后执行命令启动：
 ```bash
