@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+{% load staticfiles %}
+<link href="{%static "css/adstyle.css" %}" rel="stylesheet" type="text/css" />
+{% include "header.html" %}
+<style>
+    body{
+        background-color: #F2F2F2;
+        margin-left: 220px;
+        margin-top: 60px;
+    }
+</style>
+<body>
+{% include 'menu.html' %}
+
+<div class="home">
+
+    <div class="homepage">
+        <div class="ptbt"><a>Linux运维平台</a></div>
+        <div class="pagename"><a>首页面板</a></div>
+        <div class="dangqianweizhi"><a>首页</a></div>
+    </div>
+
+</div>
+<div class="content" align="center">
+    <ol class="breadcrumb"  style="background-color: #FFFFFF; margin-bottom: 15px; width: 95%; height: 50px;">
+        <li class="active" style="color: #1c2b36;text-align: left; line-height: 50px;margin-left: 10px; font-size: 15px;"><b>仪表盘 /Dashboard </b></li>
+    </ol>
+    <div class="jktu" style="width: 95%;background-color: #FFFFFF; margin-bottom: 20px;">
+{#      <img src="">  #}#这里做一个类似阿里云的动态监控可视化表
+    </div>
+</div>
+</body>
+<script>
+     function hidMenu () {
+        var middle =  document.getElementsByClassName("middle")[0].style;
+        {#var home_right_left = document.getElementsByClassName("home_right")[0].style;#}
+        var homepage =document.getElementsByClassName("homepage")[0].style;
+         homepage.position="absolute";
+        {#var home_right_width =  document.getElementsByClassName("home_right")[0].style;#}
+        var inClass =document.getElementsByClassName("in")[0].style;
+        var content = document.getElementsByClassName("content")[0].style;
+        content.position="relative";
+        if(inClass.left == "0px"){
+            inClass.left="220px";
+           middle.left = "0px";
+          homepage.left="225px" ;
+          content.left="0px";
+           {#home_right_left.left="220px";#}
+           {#home_right_width.width="85%";#}
+        }else{
+            inClass.left="0px";
+            middle.left = "-220px";
+             homepage.left="0px";
+             content.left="-225px";
+            {#home_right_left.left="0px";#}
+            {#home_right_width.width="99%";#}
+        }
+    }
+</script>
+</html>
