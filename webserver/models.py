@@ -24,7 +24,10 @@ class hostinfo(models.Model):
     CPU = models.CharField('cpu', max_length=255)
     CPUS = models.IntegerField('cpus')
     OS = models.CharField('os', max_length=255)
+    kernelrelease = models.CharField('kernelrelease', max_length=255)
     virtual1 = models.CharField('virtual', max_length=255)
+    biosversion = models.CharField('biosversion', max_length=255)
+    serialnumber = models.CharField('serialnumber', max_length=255)
     status = models.CharField('状态', max_length=50)
 
     def __str__(self):
