@@ -1,5 +1,6 @@
 # Create your views here.
 # -*- coding: utf-8 -*-
+from django.contrib.sites import requests
 from django.http import HttpResponse
 from django.core.paginator import PageNotAnInteger, Paginator, InvalidPage, EmptyPage
 from django.shortcuts import render
@@ -11,6 +12,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db.models import Count, Sum
 from .models import hostinfo
+import msgpack
+import Crypto
 from django.http import JsonResponse
 from django.core import serializers
 from .models import monitorMemory
@@ -43,13 +46,13 @@ def page_error(request):
 
 
 def jsons(req):
-
     dirct = [
         {"itemid": "28460", "clock": "1567619420", "value": "16", "ns": "151957225"},
         {"itemid": "28460", "clock": "1567619480", "value": "88", "ns": "129122924"},
         {"itemid": "28460", "clock": "1567619540", "value": "48", "ns": "434677337"},
     ]
     return HttpResponse(json.dumps(dirct))
+
 
 def login(req):
     '''
@@ -112,7 +115,7 @@ def getHostIp(request):
         ip = request.META['HTTP_X_FORWARDED_FOR']
     else:
         ip = request.META['REMOTE_ADDR']
-    return render(request, 'menu.html', {'hostip': '192.168.36.1'})
+    return render(request, 'menu.html', {'hostip': '192.168.1.1'})
 
 
 @login_required
@@ -218,8 +221,8 @@ def serverList(request, id=0):
     '''
     服务器列表
     '''
-    if id != 0:
-        hostinfo.objects.filter(id=id).delete()
+    # if id != 0:
+    #     hostinfo.objects.filter(id=id).delete()
     if request.method == "POST":
         getHostInfo()
         print(request.POST)
@@ -285,7 +288,7 @@ def serverList(request, id=0):
         if not offset:
             offset = 0
         if not pageSize:
-            pageSize = 10  # 默认是每页20行的内容，与前端默认行数一致
+            pageSize = 10  # 默认是每页10行的内容，与前端默认行数一致
         pageinator = Paginator(all_records, pageSize)  # 开始做分页
         page = int(int(offset) / int(pageSize) + 1)
         response_data = {'total': all_records_count, 'rows': []}
@@ -298,7 +301,10 @@ def serverList(request, id=0):
                 "CPU": server_li.CPU if server_li.CPU else "",
                 "CPUS": server_li.CPUS if server_li.CPUS else "",
                 "OS": server_li.OS if server_li.OS else "",
+                "kernelrelease": server_li.kernelrelease if server_li.kernelrelease else "",
                 "virtual1": server_li.virtual1 if server_li.virtual1 else "",
+                "biosversion": server_li.biosversion if server_li.biosversion else "",
+                "serialnumber": server_li.serialnumber if server_li.serialnumber else "",
                 "status": server_li.status if server_li.status else "",
             })
         return HttpResponse(json.dumps(response_data))
@@ -307,20 +313,20 @@ def serverList(request, id=0):
 
 def getHostInfo():
     ### salt调用 ###
-    local = salt.client.LocalClient() # api
+    # local = salt.client.LocalClient()  # api
     ### 目标主机指定 ###
     tgt = "*"
     ### 获取grains，disk信息 ###
-    grains = local.cmd(tgt,"grains.items") # api
-    (status, grains_return) = subprocess.getstatusoutput(" ssh 127.0.0.1 'salt \"*\" --out raw grains.items' ")
+    # grains = local.cmd(tgt, "grains.items")  # api
+    (status, grains_return) = subprocess.getstatusoutput(" ssh 192.168.217.128 'salt \"*\" --out raw grains.items' ")
     grains = eval(grains_return.replace('}}\n{', '},'))
-    diskusage = local.cmd(tgt,"disk.usage") # api
-    (status, diskusage) = subprocess.getstatusoutput(" ssh 127.0.0.1 'salt \"*\" --out raw disk.usage' ")
+    # diskusage = local.cmd(tgt, "disk.usage")  # api
+    (status, diskusage) = subprocess.getstatusoutput(" ssh 192.168.217.128 'salt \"*\" --out raw disk.usage' ")
     diskusage = eval(diskusage.replace('}}\n{', '},'))
     for i in grains.keys():
         try:
             ###去掉127.0.0.1这个地址
-            hostname = grains[i]["nodename"]
+            hostname = grains[i]["id"]
             ip = str(grains[i]["ipv4"]).strip('[]')
             ip = ip.replace("\'", "")
             ip = ip.replace("127.0.0.1,", "")
@@ -330,9 +336,12 @@ def getHostInfo():
             mem = grains[i]["mem_total"] / 1024 + 1
             num_cpu = grains[i]["num_cpus"]
             OS = grains[i]["os"] + ' ' + grains[i]["osrelease"]
+            kernelrelease = grains[i]["kernelrelease"]
             cpu = grains[i]["cpu_model"]
             virtual1 = grains[i]["virtual"]
-            status = '连接'
+            biosversion = grains[i]["biosversion"]
+            serialnumber = grains[i]["serialnumber"]
+            status = 'True'
             # 磁盘容量
             if "/" not in diskusage[i]:
                 disk_used = " "
@@ -376,20 +385,27 @@ def getHostInfo():
                     hostinfoupdate.CPU = cpu
                     hostinfoupdate.CPUS = num_cpu
                     hostinfoupdate.OS = OS
+                    hostinfoupdate.kernelrelease = kernelrelease
                     hostinfoupdate.virtual1 = virtual1
+                    hostinfoupdate.serialnumber = serialnumber
+                    hostinfoupdate.biosversion = biosversion
                     hostinfoupdate.status = status
                     hostinfoupdate.save()
                 else:
-                    hostinfoadd = hostinfo()
-                    hostinfoadd.hostname = hostname
-                    hostinfoadd.IP = ip
-                    hostinfoadd.Mem = mem
-                    hostinfoadd.CPU = cpu
-                    hostinfoadd.CPUS = num_cpu
-                    hostinfoadd.OS = OS
-                    hostinfoadd.virtual1 = virtual1
-                    hostinfoadd.status = status
-                    hostinfoadd.save()
+                    pass
+                    # hostinfoadd = hostinfo()
+                    # hostinfoadd.hostname = hostname
+                    # hostinfoadd.IP = ip
+                    # hostinfoadd.Mem = mem
+                    # hostinfoadd.CPU = cpu
+                    # hostinfoadd.CPUS = num_cpu
+                    # hostinfoadd.OS = OS
+                    # hostinfoadd.kernelrelease = kernelrelease
+                    # hostinfoadd.virtual1 = virtual1
+                    # hostinfoadd.serialnumber = serialnumber
+                    # hostinfoadd.biosversion = biosversion
+                    # hostinfoadd.status = status
+                    # hostinfoadd.save()
             else:
                 hostinfoadd = hostinfo()
                 hostinfoadd.hostname = hostname
@@ -398,14 +414,17 @@ def getHostInfo():
                 hostinfoadd.CPU = cpu
                 hostinfoadd.CPUS = num_cpu
                 hostinfoadd.OS = OS
+                hostinfoadd.kernelrelease = kernelrelease
                 hostinfoadd.virtual1 = virtual1
+                hostinfoadd.serialnumber = serialnumber
+                hostinfoadd.biosversion = biosversion
                 hostinfoadd.status = status
                 hostinfoadd.save()
         except:
             hostnames = hostinfo.objects.values_list('hostname', flat=True)  # 获取资产列表中的主机名
             if i in hostnames:
                 hostinfoupstatus = hostinfo.objects.get(hostname=i)
-                hostinfoupstatus.status = '未连接'
+                hostinfoupstatus.status = 'False'
                 hostinfoupstatus.save()
             continue
 
@@ -427,11 +446,11 @@ def hostAdmin(request):
             if '"' in command:
                 command = command.replace('"', "'")
             (status, result) = subprocess.getstatusoutput(
-                " ssh 127.0.0.1 'salt \"" + cmd_host + "\" " + funlist + " \" " + command + " \" ' ")
+                " ssh 192.168.217.128 'salt \"" + cmd_host + "\" " + funlist + " \" " + command + " \" ' ")
             # result = local.cmd(cmd_host, funlist, [command])  # api
         else:
             (status, result) = subprocess.getstatusoutput(
-                " ssh 127.0.0.1 'salt \"" + cmd_host + "\" " + funlist + " ' ")
+                " ssh 192.168.217.128 'salt \"" + cmd_host + "\" " + funlist + " ' ")
             # result = local.cmd(cmd_host, funlist) # api
         result_dict = {
             'search': search,
@@ -455,7 +474,6 @@ def loginZabbix():
     # "method":"user.authenticate","params":{"user":"Admin","password":"zabbix"},
     # "auth": null,"id":0}' http://192.168.36.133/zabbix/api_jsonrpc.php
     # 上面三行是一个完整的curl命令，测试zabbix的API接口
-
 
     # url and url header
     # zabbix的api 地址，用户名，密码，这里修改为自己实际的参数
@@ -524,12 +542,12 @@ def getMonitor(request):
             if "monitorHost" in request.POST:  # name为monitorHost的表单提交
                 hostid = request.POST.get('monitorHost', '')
             else:
-                hostid = 10084
+                hostid = 10256
         else:
-            hostid = 10084
+            hostid = 10256
 
         '''获取提交主机的itemids'''
-        itemids = dataHandle(func=getZabbixitem,hostid=hostid)
+        itemids = dataHandle(func=getZabbixitem, hostid=hostid)
 
         '''获取CPU使用率'''
         cpuutils_dict = dataHandle(func=getZabbixCPUutil, hostid=hostid)
@@ -595,11 +613,10 @@ def getMonitor(request):
             fsCpuUserHistory_now = cpuuserdatalist
             # fsCpuHistory_now  # 历史数据大小 system.cpu.util[,user]
 
-        cpuuserdatelist=[]
+        cpuuserdatelist = []
         for i in fsCpuUserHistory_dict:
             cpuuserdatelist.append(i['clock'])
             fsCpuUserHistory_now_x = cpuuserdatelist  # 历史数据时间轴 system.cpu.util[,user]
-
 
         cpusysdatalist = []
         for i in fsCpuSysHistory_dict:
@@ -797,11 +814,12 @@ def getfsfree(*args, **b):
     })
     return disk_data
 
+
 def getfshomefree(*args, **b):
     '''
     获取磁盘空闲
     '''
-    disk_data= json.dumps({
+    disk_data = json.dumps({
         "jsonrpc": "2.0",
         "method": "item.get",
         "params": {
@@ -815,6 +833,7 @@ def getfshomefree(*args, **b):
         "id": 2
     })
     return disk_data
+
 
 def getfshomeused(*args, **b):
     '''
@@ -835,6 +854,7 @@ def getfshomeused(*args, **b):
     })
     return diskhome_data
 
+
 def getfsbootfree(*args, **b):
     '''
     获取boot分区空闲
@@ -854,6 +874,7 @@ def getfsbootfree(*args, **b):
     })
     return diskboot_data
 
+
 def getfsbootused(*args, **b):
     '''
     获取boot分区使用
@@ -865,13 +886,14 @@ def getfsbootused(*args, **b):
             "output": "extend",
             "hostids": b["parameter"],
             "search": {
-                "key_": "vfs.fs.size[/boot,used]"     # 只查询磁盘的bootused
+                "key_": "vfs.fs.size[/boot,used]"  # 只查询磁盘的bootused
             }
         },
         "auth": b["session"],
         "id": 2
     })
     return diskboot_data
+
 
 def getmemsize(*args, **b):
     '''
@@ -891,6 +913,7 @@ def getmemsize(*args, **b):
         "id": 2
     })
     return mem_data
+
 
 def getCpuUserHistory(*args, **b):
     '''
@@ -914,6 +937,7 @@ def getCpuUserHistory(*args, **b):
     })
     return CpuUserHis_data
 
+
 def getCpuSysHistory(*args, **b):
     '''
     内核空间使用CPU比例
@@ -936,6 +960,7 @@ def getCpuSysHistory(*args, **b):
     })
     return CpuSysHis_data
 
+
 def getNetInDataTraffic(*args, **b):
     '''
     网络流入数据
@@ -946,7 +971,7 @@ def getNetInDataTraffic(*args, **b):
         "params": {
             "output": "extend",
             # "itemids": b["parameter"],
-            "itemids": 28460,  #  net.if.in[eno16777736] 网卡input数据
+            "itemids": 28460,  # net.if.in[eno16777736] 网卡input数据
             "history": 3,
             "limit": 16
         },
@@ -954,6 +979,7 @@ def getNetInDataTraffic(*args, **b):
         "id": 2
     })
     return NetDataTraffic_data
+
 
 def getNetOutDataTraffic(*args, **b):
     '''
@@ -965,7 +991,7 @@ def getNetOutDataTraffic(*args, **b):
         "params": {
             "output": "extend",
             # "itemids": b["parameter"],
-            "itemids": 28461,  #  net.if.out[eno16777736] 网卡out数据
+            "itemids": 28461,  # net.if.out[eno16777736] 网卡out数据
             "history": 3,
             "limit": 16
         },
@@ -973,8 +999,6 @@ def getNetOutDataTraffic(*args, **b):
         "id": 2
     })
     return NetOutDataTraffic_data
-
-
 
 
 def sendemail():
@@ -1005,6 +1029,37 @@ def sendemail():
         print("Error: 无法发送邮件" + str(e))
 
 
+# 先获取Token
+def get_token():
+    url = 'http://192.168.10.12:8000/login'
+    login_data = {'username': 'wmm', 'password': 'wmm', 'eauth': 'pam'}
+    headers = {'Accept': 'application/json'}
+    res = requests.post(url, headers=headers, data=login_data)
+    token = res.json()['return'][0]['token']
+    return token
+
+
+# 获取 token之后，我们在写一个执行指令的方法
+def saltCmd(ip, fun, *args, **kwargs):
+    token = get_token()
+    url = "http://192.168.10.12:8000"
+    headers = {'Accept': 'application/json', "X-Auth-Token": token}
+    res = requests.post(url, headers=headers, json= \
+        {'client': 'local', 'tgt': ip, 'fun': fun, 'arg': list(args), 'kwarg': kwargs})
+    response = res.json()['return']
+    return response
+
+
+#  编写一个前端交互的控制器：
+@login_required
+def saltstack(request, ip):
+    fun = request.GET['fun']
+    args = request.GET['args']
+    kwargs = request.GET['kwargs']
+    res = saltCmd(ip, fun, args, kwargs)
+    return HttpResponse(res)
+
+
 @login_required
 def serverAdd(request):
     result = ''
@@ -1024,14 +1079,14 @@ def serverAdd(request):
                         break
             if ip not in check_ip_list and check_ip_inro == 0:
                 try:
-                    os.system("echo '" + ip + ":'>> /etc/salt/roster && \
+                    os.system("echo '" + "salt-minion02:'>> /etc/salt/roster && \
                                 echo '  host: " + ip + "'>> /etc/salt/roster && \
                                 echo '  user: " + username + "'>> /etc/salt/roster && \
                                 echo '  passwd: " + password + "'>> /etc/salt/roster && \
                                 echo '  sudo: True'>> /etc/salt/roster && \
                                 echo '  tty: True'>> /etc/salt/roster && \
                                 echo '  timeout: 10'>> /etc/salt/roster")
-                    os.system("salt-ssh '" + ip + "' -ir 'easy_install certifi'")  # 安装cretifi模块
+                    os.system("salt-ssh '" + ip + "' -ir 'pip install certifi'")  # 安装cretifi模块
                     (status_gethostname, resultgethostname) = subprocess.getstatusoutput(
                         "salt-ssh -ir '" + ip + "' 'hostname'")  # 获取hostname
                     os.system(
