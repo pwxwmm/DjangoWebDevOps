@@ -65,6 +65,7 @@
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua8.png) 
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua9.png)
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua10.png) 
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/ssh.png) 
  
 
 
