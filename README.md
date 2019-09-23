@@ -51,13 +51,12 @@
 |Echarts	|官网最新版（开发者版完整版）
 
 ##### 平台页面截图：
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/denglu.png)
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/shouye.png)
-![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/shouyecaidan.png)
-![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/cmd.png)
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/zican.png)
-![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tinajiazhuji.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/zican1.png)
+![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/zidongbushu.png)
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua1.png)
-![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua2.png)
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua3.png)
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua4.png)
 ![image](https://github.com/pwxwmm/DjangoWebDevOps/blob/master/DisplayImages/tuxinghua5.png)
@@ -73,7 +72,7 @@
 
 ##### 第一种方法：
 
->可以选择在WIN环境下，调试，使用Pycharm进行部署，运行runserver，打开浏览器就能访问了。
+>可以选择在WIN或者Linux(最好是LINUX)环境下，调试，使用Pycharm进行部署，运行runserver，打开浏览器就能访问了。
 
 下面是细节：
 
@@ -88,7 +87,7 @@
 * 5,执行数据迁移。打开pycharm的terminal窗口，默认路径即可，执行py manage.py makemigrations webserver . 继续执行py manage.py migrate webserver
 如果没有报异常，那么就可以打开migrations这个目录，看一下0001_initial.py这个文件的内容，或者使用命令python manage.py showmigrations直接输出迁移内容。
 
-* 6,最重要的是要检查下模块的依赖性，这里最难导入的模块就是saltstack模块，使用pip导入的时候，尽可能的加个–timeout参数把默认超时时间15s加大一下.然后运行服务，打开浏览器，输入自己配置的django的IP+端口号，就可以访问啦。
+* 6,最重要的是要检查下模块的依赖性，这里最难导入的模块就是saltstack模块还有一个加密的Crypto模块，使用pip导入的时候，尽可能的加个–timeout参数把默认超时时间15s加大一下.然后运行服务，打开浏览器，输入自己配置的django的IP+端口号，就可以访问啦。
 
 
 
