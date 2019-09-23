@@ -12,7 +12,7 @@
 <div class="home">
     <div class="home_right">
         <div class="homepage">
-            <div class="ptbt"><a>运维平台</a></div>
+            <div class="ptbt"><a>机房管理平台</a></div>
             <div class="pagename"><a>主机信息列表</a></div>
             <div class="dangqianweizhi"><a>首页 > CMDB系统 > 数据查询</a></div>
         </div>
@@ -62,7 +62,7 @@
                             contentType: "application/x-www-form-urlencoded",//必须要有！！！！
                             dataType: "json",
                             cache: false,
-                            url:'{% url 'server_list' %}',
+                            url:'{% url "server_list" %}',
                             toolbar: '#mytab',//指定工具栏
                             striped: true,  //表格显示条纹
                             dataField: "rows",
@@ -121,22 +121,27 @@
                                     sortable:true
                                 },
                                 {
+                                    title:'内核版本',
+                                    field:'kernelrelease',
+                                    sortable:true
+                                },
+                                {
                                     title:'virtual',
                                     field:'virtual1',
                                     sortable:true
                                 },
                                 {
-                                    title:'状态',
-                                    field:'status',
-                                    sortable:true
-                                },
-                                {
-                                    title:'机房',
-                                    field:'status',
+                                    title:'BIOS-V',
+                                    field:'biosversion',
                                     sortable:true
                                 },
                                 {
                                     title:'厂商型号',
+                                    field:'serialnumber',
+                                    sortable:true
+                                },
+                                {
+                                    title:'状态',
                                     field:'status',
                                     sortable:true
                                 },
@@ -148,7 +153,7 @@
                                     //formatter:operateFormatter
                                     formatter:function(value,row,serverlist){
                                         var e = '<a href="#" mce_href="#" onclick="edit(\''+ row.id + '\')">编辑</a> ';
-                                        var d = '<a href="{% url "server_list"%}'+ row.id +'" mce_href="#" onclick="return delete_sql();">删除</a> ';
+                                        var d = '<a href="{% url "server_list" %}'+ row.id +'" mce_href="#" onclick="return delete_sql();">删除</a> ';
                                             return e+d;
                                     }
                                 }
